@@ -2,9 +2,11 @@
 # modified by Uli  09/13/06
 
 # CFLAGS=-g 
- CFLAGS=-g -Wall 
+CFLAGS=-g -Wall 
 
-CC= gcc
+CC   = gcc
+LEX  = lex
+YACC = yacc
 
 sim:		sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
 		$(CC) $(CFLAGS) -lm -o sim sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
@@ -31,10 +33,10 @@ y.tab.o:	y.tab.c
 		$(CC) -g -c y.tab.c
 
 lex.yy.c:	iloc.l y.tab.c instruction.h
-		lex iloc.l
+		$(LEX) iloc.l
 
 y.tab.c:	iloc.y instruction.h
-		yacc -dtv iloc.y
+		$(YACC) -dtv iloc.y
 
 clean:
 		rm *.o
