@@ -103,7 +103,7 @@ r{NUM}        {
 
 %%
 
-yywrap()
+int yywrap()
 {
   return 1;
 }
