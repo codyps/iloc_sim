@@ -1,55 +1,42 @@
-# Makefile for ILOC simulator
-# modified by Uli  09/13/06
+CFLAGS = -g -Wall -MMD
+LDFLAGS= -lm
 
-# CFLAGS=-g 
-CFLAGS=-g -Wall 
+CC     = gcc
+CCLD   = gcc
+LEX    = lex
+YACC   = yacc
+RM     = rm -rf
 
-CC   = gcc
-LEX  = lex
-YACC = yacc
+PURIFY = /usr/site/purify/purify $(CC)
+PURIFY_FLAGS = $(CCLD) $(CFLAGS) $(LDFLAGS)
 
-sim:		sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
-		$(CC) $(CFLAGS) -lm -o sim sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
+OBJ = sim.o machine.o instruction.o hash.o iloc.yy.o iloc.tab.o
 
-pure:		sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
-		/usr/site/purify/purify $(CC) $(CFLAGS) -o pure sim.o machine.o instruction.o hash.o lex.yy.o y.tab.o
+sim: $(OBJ)
+	$(CCLD) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-sim.o:		sim.c instruction.h machine.h sim.h
-		$(CC) $(CFLAGS) -lm -c sim.c
+pure: $(OBJ)
+	$(PURIFY) $(PURIFY_FLAGS) -o $@ $^
 
-machine.o:	machine.c machine.h
-		$(CC) $(CFLAGS) -c machine.c
+%.o : %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-instruction.o:	instruction.c instruction.h hash.h
-		$(CC) $(CFLAGS) -c instruction.c
+sim.o:		instruction.h machine.h sim.h
+machine.o:	machine.h
+instruction.o:	instruction.h hash.h
+hash.o:		hash.h
+iloc.tab.c:	instruction.h
 
-hash.o:		hash.c hash.h
-		$(CC) $(CFLAGS) -c hash.c
+%.yy.c: %.l %.tab.c
+	$(LEX) -t iloc.l > $@
 
-lex.yy.o:	lex.yy.c
-		$(CC) -g -c lex.yy.c
-
-y.tab.o:	y.tab.c
-		$(CC) -g -c y.tab.c
-
-lex.yy.c:	iloc.l y.tab.c instruction.h
-		$(LEX) iloc.l
-
-y.tab.c:	iloc.y instruction.h
-		$(YACC) -dtv iloc.y
+%.tab.c: %.y
+	$(YACC) -dtv $< -b $(@:.y=)
 
 clean:
-		rm *.o
-		rm lex.yy.c
-		rm y.tab.c
-		rm y.tab.h
-		rm y.output
+	$(RM) $(OBJ) iloc.yy.c iloc.tab.c iloc.tab.h y.output sim pure
 
-depend:
-	makedepend -I. *.c
+wc:
+	wc iloc.y iloc.l hash.h hash.c instruction.h instruction.c machine.h machine.c sim.h sim.c
 
-wc:		
-		wc iloc.y iloc.l hash.h hash.c instruction.h instruction.c machine.h machine.c sim.h sim.c
-# DO NOT DELETE
-
-hash.o: hash.h
+-include $(wildcard *.d)
