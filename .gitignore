@@ -4,4 +4,4 @@
 sim
 *.tab.*
 *.yy.*
-y.output
+*.output
