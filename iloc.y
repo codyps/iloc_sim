@@ -82,7 +82,6 @@
 %token COMMA
 %token ARROW
 %token OPCODE
-%token OUTPUT
 %token REGISTER
 %token NUMBER
 /* %token LABEL

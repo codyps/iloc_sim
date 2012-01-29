@@ -31,7 +31,7 @@ Complementary modifications made in the parser.
   #include <string.h>
 
   #include "instruction.h"
-  #include "y.tab.h"
+  #include "iloc.tab.h"
 
   int line_counter = 1;
   Opcode* current_opcode;
