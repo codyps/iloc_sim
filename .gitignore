@@ -1,0 +1,7 @@
+*.[od]
+*~
+.*.swp
+sim
+*.tab.*
+*.yy.*
+y.output
