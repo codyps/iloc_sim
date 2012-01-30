@@ -28,13 +28,13 @@ hash.o:		hash.h
 iloc.tab.c:	instruction.h
 
 %.yy.c: %.l %.tab.c
-	$(LEX) -t iloc.l > $@
+	$(LEX) -t $< | sed 's/<stdout>/$@/g' > $@
 
 %.tab.c: %.y
 	$(YACC) -dtv $< -b $(<:.y=)
 
 clean:
-	$(RM) $(OBJ) iloc.yy.c iloc.tab.c iloc.tab.h y.output sim pure
+	$(RM) $(OBJ) iloc.yy.c iloc.tab.c iloc.tab.h y.output sim pure *.d
 
 wc:
 	wc iloc.y iloc.l hash.h hash.c instruction.h instruction.c machine.h machine.c sim.h sim.c

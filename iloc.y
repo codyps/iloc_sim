@@ -170,8 +170,6 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = append_operands($2->labels,$4->labels);
 		     $$->defs = $4->regs;
 		     $$->next = NULL;
-		     /* 		     free($2);
-					     free($4); */
 		 }
                  | the_opcode operand_list
                  {
@@ -183,7 +181,6 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = $2->labels;
 		     $$->defs = NULL;
 		     $$->next = NULL;
-		     /* 		     free($2); */
 		 }
                  | the_opcode ARROW operand_list
                  {
@@ -195,7 +192,6 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = $3->labels;
 		     $$->defs = $3->regs;
 		     $$->next = NULL;
-		     /* 		     free($3); */
 		 }
                  | the_opcode
                  {
@@ -218,6 +214,7 @@ the_opcode       : OPCODE
 
 operand_list     : reg
                  {
+		 	/* XXX: LEAKS */
 		     $$ = new_operands();
 		     $$->num_regs = 1;
 		     $$->regs = $1;
@@ -231,6 +228,7 @@ operand_list     : reg
 		 }
                  | const
                  {
+		 	/* XXX: LEAKS */
 		     $$ = new_operands();
 		     $$->num_consts = 1;
 		     $$->consts = $1;
@@ -259,16 +257,12 @@ operand_list     : reg
 
 reg              : REGISTER
                  {
-		   /* 		     $$ = malloc(sizeof(Operand));
-				     $$->value = (int) strtol(&yytext[1], (char**) NULL, 10); */
 		     $$->next = NULL;
 		 }
                  ;
 
 const            : NUMBER
                  {
-		   /* 		     $$ = malloc(sizeof(Operand));
-				     $$->value = (int) strtol(yytext, (char**) NULL, 10); */
 		     $$->next = NULL;
 		 }
 		 ;
@@ -277,8 +271,6 @@ const            : NUMBER
    SEE instruction.c FOR insert_label() */
 lbl              : LABEL
                  {
-		   /* 		     $$ = malloc(sizeof(Operand));
-				     $$->value = insert_label(yytext); */
 		     $$->value = insert_label($1);
 		     $$->next = NULL;
 		 }
@@ -286,9 +278,6 @@ lbl              : LABEL
 
 label_def        : TARGET
                  {
-		   /* 		     int last_char = strlen(yytext) - 1;
-		     yytext[last_char] = '\0';
-		     $$ = insert_label(yytext); */
 		     int last_char = strlen($1) - 1;
 		     $1[last_char] = '\0';
 		     $$ = insert_label($1);
