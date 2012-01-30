@@ -170,6 +170,7 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = append_operands($2->labels,$4->labels);
 		     $$->defs = $4->regs;
 		     $$->next = NULL;
+		     free($2); free($4);
 		 }
                  | the_opcode operand_list
                  {
