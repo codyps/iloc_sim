@@ -31,7 +31,7 @@ iloc.tab.c:	instruction.h
 	$(LEX) -t $< | sed 's/<stdout>/$@/g' > $@
 
 %.tab.c: %.y
-	$(YACC) -dtv $< -b $(<:.y=)
+	$(YACC) -dtv -b $(<:.y=) $<
 
 clean:
 	$(RM) $(OBJ) iloc.yy.c iloc.tab.c iloc.tab.h y.output sim pure *.d
