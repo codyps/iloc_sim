@@ -182,6 +182,7 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = $2->labels;
 		     $$->defs = NULL;
 		     $$->next = NULL;
+		     free($2);
 		 }
                  | the_opcode ARROW operand_list
                  {
@@ -193,6 +194,7 @@ operation        : the_opcode operand_list ARROW operand_list
 		     $$->labels = $3->labels;
 		     $$->defs = $3->regs;
 		     $$->next = NULL;
+		     free($3);
 		 }
                  | the_opcode
                  {
@@ -215,7 +217,6 @@ the_opcode       : OPCODE
 
 operand_list     : reg
                  {
-		 	/* XXX: LEAKS */
 		     $$ = new_operands();
 		     $$->num_regs = 1;
 		     $$->regs = $1;
@@ -229,7 +230,6 @@ operand_list     : reg
 		 }
                  | const
                  {
-		 	/* XXX: LEAKS */
 		     $$ = new_operands();
 		     $$->num_consts = 1;
 		     $$->consts = $1;
